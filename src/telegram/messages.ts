@@ -149,7 +149,8 @@ export async function sendFile(
   chatId: string,
   filePath: string,
   caption?: string,
-  verbose: boolean = false
+  verbose: boolean = false,
+  remove: boolean = false
 ): Promise<void> {
   if (!sessionExists()) {
     outputError("Not logged in. Run --login first.");
@@ -261,8 +262,10 @@ export async function sendFile(
               caption: caption || "",
               uploadedAt: new Date().toISOString(),
             });
-            // 업로드 성공 시 파일 삭제
-            fs.unlinkSync(file);
+            // --remove 옵션이 있을 때만 파일 삭제
+            if (remove) {
+              fs.unlinkSync(file);
+            }
             results.push({
               fileName,
               fileSize,
@@ -363,8 +366,10 @@ export async function sendFile(
         uploadedAt: new Date().toISOString(),
       });
 
-      // 업로드 성공 시 파일 삭제
-      fs.unlinkSync(filePath);
+      // --remove 옵션이 있을 때만 파일 삭제
+      if (remove) {
+        fs.unlinkSync(filePath);
+      }
 
       if (verbose) {
         console.log(`  ✓ Success (messageId: ${result.id})`);

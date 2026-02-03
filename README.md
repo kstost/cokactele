@@ -32,27 +32,164 @@ npx cokactele --help
 - Node.js >= 16.0.0
 - Telegram account
 
-## Quick Start
+## Step-by-Step Guide for Beginners
 
-### 1. Login
+This guide walks you through using cokactele from scratch.
+Follow these steps to send messages and upload files via terminal.
+
+### Step 1: Install cokactele
+
+Make sure Node.js is installed, then run:
+
+```bash
+npm install -g cokactele
+```
+
+Once installed, the `cokactele` command is available.
+
+### Step 2: Login to Telegram
+
+Connect your Telegram account:
 
 ```bash
 cokactele login
 ```
 
-Follow the interactive prompts to enter your phone number and verification code.
+You'll see a prompt asking for your phone number:
 
-### 2. List Chats
+```text
+Enter phone number (with country code, e.g., +820000000000):
+```
+
+Enter your phone number with country code:
+
+```text
++821012345678
+```
+
+### Step 3: Enter Verification Code
+
+After entering your phone number, Telegram will send a verification code to your app.
+
+```text
+Authentication code sent via app
+Enter the code you received:
+```
+
+Enter the code from your Telegram app. Once verified, you're logged in!
+(You won't need to login again on this machine)
+
+### Step 4: Find Your Chat ID
+
+List all your chats to find the chat ID:
 
 ```bash
 cokactele listchat
 ```
 
-### 3. Send a Message
+Output example:
+
+```json
+{
+  "success": true,
+  "chats": [
+    {
+      "id": "123456789",
+      "type": "user",
+      "title": "John Doe",
+      "unreadCount": 0
+    },
+    {
+      "id": "-100987654321",
+      "type": "channel",
+      "title": "My Channel",
+      "unreadCount": 5
+    }
+  ]
+}
+```
+
+**Important fields:**
+- `id` - **Chat ID** (you need this to send messages!)
+- `title` - Chat name
+- `type` - user / group / channel
+
+**Tip:** Use `jq` for prettier output:
 
 ```bash
-cokactele sendmessage <chatId> -m "Hello, World!"
+cokactele listchat | jq
 ```
+
+### Step 5: Send a Message
+
+Now send a message using the chat ID:
+
+```bash
+cokactele sendmessage 123456789 -m "Hello from terminal!"
+```
+
+Output:
+
+```json
+{
+  "success": true,
+  "messageId": 1001,
+  "chatId": "123456789",
+  "text": "Hello from terminal!",
+  "date": "2026-01-01T12:00:00.000Z"
+}
+```
+
+### Step 6: Upload a File
+
+Send a file to a chat:
+
+```bash
+cokactele sendmessage 123456789 -f ./example.zip
+```
+
+Add `-v` to see upload progress:
+
+```bash
+cokactele sendmessage 123456789 -f ./example.zip -v
+```
+
+Output:
+
+```
+Uploading: example.zip
+  [████████████████████████] 100% | 10 MB/10 MB | ETA: 0s
+  ✓ Success (messageId: 1002)
+
+Completed: 1/1 files uploaded
+```
+
+### Step 7: Upload an Entire Folder
+
+Upload all files in a directory at once:
+
+```bash
+cokactele sendmessage 123456789 -f ./backup-folder -v
+```
+
+Files are uploaded one by one in order.
+
+### What You Can Do Now
+
+- Send messages from terminal
+- Upload files and folders
+- Add Telegram notifications to automation scripts
+- Send alerts from servers, CI/CD pipelines, or backup jobs
+
+### Example: Automation Script
+
+```bash
+#!/bin/bash
+# Send notification when a job completes
+cokactele sendmessage 123456789 -m "Job completed at $(date)"
+```
+
+---
 
 ## Commands
 
@@ -210,12 +347,13 @@ cokactele sendmessage <chatId> -f /path/to/file -v
 | `-m, --message <text>` | Text message or caption |
 | `-f, --file <path>` | File or directory path |
 | `-v, --verbose` | Show upload progress |
+| `-r, --remove` | Remove file after successful upload |
 
 **File Size Limits:**
 - Free account: 1.9GB
 - Premium account: 3.9GB
 
-**Note:** Successfully uploaded files are automatically deleted from local storage.
+**Note:** Use `-r` or `--remove` flag to delete local files after successful upload.
 
 **Progress Display (-v):**
 ```

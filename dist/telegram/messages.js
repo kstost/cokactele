@@ -163,7 +163,7 @@ async function sendMessage(chatId, message) {
         }
     }
 }
-async function sendFile(chatId, filePath, caption, verbose = false) {
+async function sendFile(chatId, filePath, caption, verbose = false, remove = false) {
     if (!(0, session_1.sessionExists)()) {
         (0, output_1.outputError)("Not logged in. Run --login first.");
         return;
@@ -252,8 +252,10 @@ async function sendFile(chatId, filePath, caption, verbose = false) {
                             caption: caption || "",
                             uploadedAt: new Date().toISOString(),
                         });
-                        // 업로드 성공 시 파일 삭제
-                        fs.unlinkSync(file);
+                        // --remove 옵션이 있을 때만 파일 삭제
+                        if (remove) {
+                            fs.unlinkSync(file);
+                        }
                         results.push({
                             fileName,
                             fileSize,
@@ -349,8 +351,10 @@ async function sendFile(chatId, filePath, caption, verbose = false) {
                 caption: caption || "",
                 uploadedAt: new Date().toISOString(),
             });
-            // 업로드 성공 시 파일 삭제
-            fs.unlinkSync(filePath);
+            // --remove 옵션이 있을 때만 파일 삭제
+            if (remove) {
+                fs.unlinkSync(filePath);
+            }
             if (verbose) {
                 console.log(`  ✓ Success (messageId: ${result.id})`);
                 console.log(`\nCompleted: 1/1 files uploaded`);

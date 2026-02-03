@@ -61,14 +61,15 @@ program
   .option("-m, --message <text>", "Text message or caption")
   .option("-f, --file <path>", "File or directory path to upload")
   .option("-v, --verbose", "Show upload progress", false)
-  .action(async (chatIdArg: string | undefined, options: { message?: string; file?: string; verbose: boolean }) => {
+  .option("-r, --remove", "Remove file after successful upload", false)
+  .action(async (chatIdArg: string | undefined, options: { message?: string; file?: string; verbose: boolean; remove: boolean }) => {
     const chatId = chatIdArg || getDefaultChatId();
     if (!chatId) {
       console.error("Error: chatId is required. Provide it as argument or set defaultChatId in ~/.cokactele/settings.json");
       process.exit(1);
     }
     if (options.file) {
-      await sendFile(chatId, options.file, options.message, options.verbose);
+      await sendFile(chatId, options.file, options.message, options.verbose, options.remove);
     } else if (options.message) {
       await sendMessage(chatId, options.message);
     } else {

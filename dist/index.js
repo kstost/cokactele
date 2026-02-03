@@ -54,6 +54,7 @@ program
     .option("-m, --message <text>", "Text message or caption")
     .option("-f, --file <path>", "File or directory path to upload")
     .option("-v, --verbose", "Show upload progress", false)
+    .option("-r, --remove", "Remove file after successful upload", false)
     .action(async (chatIdArg, options) => {
     const chatId = chatIdArg || (0, settings_1.getDefaultChatId)();
     if (!chatId) {
@@ -61,7 +62,7 @@ program
         process.exit(1);
     }
     if (options.file) {
-        await (0, messages_1.sendFile)(chatId, options.file, options.message, options.verbose);
+        await (0, messages_1.sendFile)(chatId, options.file, options.message, options.verbose, options.remove);
     }
     else if (options.message) {
         await (0, messages_1.sendMessage)(chatId, options.message);
