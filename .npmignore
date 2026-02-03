@@ -1,0 +1,38 @@
+# Source files (dist is included)
+src/
+
+# Config files
+tsconfig.json
+.gitignore
+.git/
+
+# Development
+test/
+*.test.ts
+*.spec.ts
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Documentation (keep README and LICENSE)
+MANUAL.md
+REPORT.md
+docs/
+
+# Misc
+*.tgz
+.env
+.env.*
