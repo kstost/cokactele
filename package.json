@@ -1,6 +1,6 @@
 {
   "name": "cokactele",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Terminal-based Telegram client for CLI automation and scripting",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
