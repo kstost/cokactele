@@ -21,7 +21,7 @@ const program = new commander_1.Command();
 program
     .name("cokactele")
     .description("Terminal-based Telegram client")
-    .version("1.0.0");
+    .version("1.3.0");
 program
     .command("login")
     .description("Login to Telegram (interactive)")
@@ -55,6 +55,13 @@ program
     .option("-f, --file <path>", "File or directory path to upload")
     .option("-v, --verbose", "Show upload progress", false)
     .option("-r, --remove", "Remove file after successful upload", false)
+    .addHelpText("after", `
+Examples:
+  $ cokactele sendmessage -m "hello"                       Send text to default chat
+  $ cokactele sendmessage 123456 -m "hello"                Send text to specific chat
+  $ cokactele sendmessage -f ./photo.jpg                   Upload a file to default chat
+  $ cokactele sendmessage -f ./photo.jpg -m "caption"      Upload a file with caption
+  $ cokactele sendmessage -f ./ -v --remove                Upload directory with progress, remove after upload`)
     .action(async (chatIdArg, options) => {
     const chatId = chatIdArg || (0, settings_1.getDefaultChatId)();
     if (!chatId) {
