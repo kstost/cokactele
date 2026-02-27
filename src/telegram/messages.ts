@@ -6,6 +6,7 @@ import { createClient, connectClient } from "./client";
 import { loadSession, sessionExists } from "../storage/session";
 import { saveFileRecord } from "../storage/file-record";
 import { outputSuccess, outputError } from "../utils/output";
+import { isCokacencFile, readOriginalName } from "../utils/cokacenc";
 
 function formatBytes(bytes: number): string {
   if (!bytes || bytes <= 0 || !Number.isFinite(bytes)) return "0 B";
@@ -231,9 +232,16 @@ export async function sendFile(
         }
 
         try {
+          // cokacenc: 사용자 캡션이 없으면 원본 파일명을 캡션으로 사용
+          let fileCaption = caption || "";
+          if (!caption && isCokacencFile(file)) {
+            const originalName = readOriginalName(file);
+            if (originalName) fileCaption = originalName;
+          }
+
           const result = await client.sendFile(entity, {
             file: file,
-            caption: caption || "",
+            caption: fileCaption,
             forceDocument: true,
             progressCallback: verbose
               ? (progress: number) => {
@@ -259,7 +267,7 @@ export async function sendFile(
               messageId: result.id,
               fileName,
               fileSize,
-              caption: caption || "",
+              caption: fileCaption,
               uploadedAt: new Date().toISOString(),
             });
             // --remove 옵션이 있을 때만 파일 삭제
@@ -338,9 +346,16 @@ export async function sendFile(
         progressBar.start(fileSize, 0, { uploadedSize: "0 B", totalSize: formatBytes(fileSize) });
       }
 
+      // cokacenc: 사용자 캡션이 없으면 원본 파일명을 캡션으로 사용
+      let fileCaption = caption || "";
+      if (!caption && isCokacencFile(filePath)) {
+        const originalName = readOriginalName(filePath);
+        if (originalName) fileCaption = originalName;
+      }
+
       const result = await client.sendFile(entity, {
         file: filePath,
-        caption: caption || "",
+        caption: fileCaption,
         forceDocument: true,
         progressCallback: verbose
           ? (progress: number) => {
@@ -362,7 +377,7 @@ export async function sendFile(
         messageId: result.id,
         fileName,
         fileSize,
-        caption: caption || "",
+        caption: fileCaption,
         uploadedAt: new Date().toISOString(),
       });
 
@@ -380,7 +395,7 @@ export async function sendFile(
           chatId: chatId,
           fileName: fileName,
           fileSize: fileSize,
-          caption: caption || "",
+          caption: fileCaption,
           date: new Date(result.date * 1000).toISOString(),
         });
       }

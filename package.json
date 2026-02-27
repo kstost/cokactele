@@ -1,6 +1,6 @@
 {
   "name": "cokactele",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Terminal-based Telegram client for CLI automation and scripting",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -42,6 +42,7 @@
   ],
   "dependencies": {
     "cli-progress": "^3.12.0",
+    "core-js": "^2.6.12",
     "commander": "^14.0.3",
     "input": "^1.0.1",
     "telegram": "^2.22.2"
@@ -52,7 +53,6 @@
     "typescript": "^5.3.3"
   },
   "overrides": {
-    "core-js": "^3.36.0",
     "yaeti": "npm:yaeti@^1.0.2"
   }
 }

@@ -45,6 +45,7 @@ const client_1 = require("./client");
 const session_1 = require("../storage/session");
 const file_record_1 = require("../storage/file-record");
 const output_1 = require("../utils/output");
+const cokacenc_1 = require("../utils/cokacenc");
 function formatBytes(bytes) {
     if (!bytes || bytes <= 0 || !Number.isFinite(bytes))
         return "0 B";
@@ -223,9 +224,16 @@ async function sendFile(chatId, filePath, caption, verbose = false, remove = fal
                     progressBar.start(fileSize, 0, { uploadedSize: "0 B", totalSize: formatBytes(fileSize) });
                 }
                 try {
+                    // cokacenc: 사용자 캡션이 없으면 원본 파일명을 캡션으로 사용
+                    let fileCaption = caption || "";
+                    if (!caption && (0, cokacenc_1.isCokacencFile)(file)) {
+                        const originalName = (0, cokacenc_1.readOriginalName)(file);
+                        if (originalName)
+                            fileCaption = originalName;
+                    }
                     const result = await client.sendFile(entity, {
                         file: file,
-                        caption: caption || "",
+                        caption: fileCaption,
                         forceDocument: true,
                         progressCallback: verbose
                             ? (progress) => {
@@ -249,7 +257,7 @@ async function sendFile(chatId, filePath, caption, verbose = false, remove = fal
                             messageId: result.id,
                             fileName,
                             fileSize,
-                            caption: caption || "",
+                            caption: fileCaption,
                             uploadedAt: new Date().toISOString(),
                         });
                         // --remove 옵션이 있을 때만 파일 삭제
@@ -326,9 +334,16 @@ async function sendFile(chatId, filePath, caption, verbose = false, remove = fal
                 }, cliProgress.Presets.shades_classic);
                 progressBar.start(fileSize, 0, { uploadedSize: "0 B", totalSize: formatBytes(fileSize) });
             }
+            // cokacenc: 사용자 캡션이 없으면 원본 파일명을 캡션으로 사용
+            let fileCaption = caption || "";
+            if (!caption && (0, cokacenc_1.isCokacencFile)(filePath)) {
+                const originalName = (0, cokacenc_1.readOriginalName)(filePath);
+                if (originalName)
+                    fileCaption = originalName;
+            }
             const result = await client.sendFile(entity, {
                 file: filePath,
-                caption: caption || "",
+                caption: fileCaption,
                 forceDocument: true,
                 progressCallback: verbose
                     ? (progress) => {
@@ -348,7 +363,7 @@ async function sendFile(chatId, filePath, caption, verbose = false, remove = fal
                 messageId: result.id,
                 fileName,
                 fileSize,
-                caption: caption || "",
+                caption: fileCaption,
                 uploadedAt: new Date().toISOString(),
             });
             // --remove 옵션이 있을 때만 파일 삭제
@@ -365,7 +380,7 @@ async function sendFile(chatId, filePath, caption, verbose = false, remove = fal
                     chatId: chatId,
                     fileName: fileName,
                     fileSize: fileSize,
-                    caption: caption || "",
+                    caption: fileCaption,
                     date: new Date(result.date * 1000).toISOString(),
                 });
             }
